@@ -13,31 +13,43 @@ public class Player : MonoBehaviour {
 	public static float damage = 50f;
 	public GameObject CBTprefab;
 	public  GameObject player;
+	public static bool isPlayerAlive = true;
+	public GameObject beePref;
 
 	private Collider2D myCollider;
 	private float jumpForce = 350f;
 	float speedForce = 4f;
 	float horizontal;
-	void Start(){
+
+	void Start()
+	{
 		rb = GetComponent<Rigidbody2D>();
-		if(anim == null){
+		if(anim == null)
+		{
 			anim = GetComponent<Animator>();
 		}
 
 		myCollider = GetComponent<CircleCollider2D>();
 		horizontal = CrossPlatformInputManager.GetAxisRaw("Horizontal");
 	}
-	void Update(){
-		if(Input.GetMouseButtonDown(0)){
+
+
+	void movingPlayer()
+	{
+		if(Input.GetMouseButtonDown(0))
+		{
 				jumpPlayer();
 		}
 		grounded = Physics2D.IsTouchingLayers(myCollider,whatIsGround);
 
-		if(horizontal > 0){
+		if(horizontal > 0)
+		{
 			anim.SetInteger("state",1);
 		}
 	}
-	void InitCBT(){
+
+	void InitCBT()
+	{
 		GameObject temp = Instantiate(CBTprefab);
 		RectTransform tempRect = temp.GetComponent<RectTransform>();
 		temp.transform.SetParent(transform.Find("PopUpCanvas"));
@@ -48,40 +60,80 @@ public class Player : MonoBehaviour {
 		//temp.GetComponent<Animator>().SetTrigger("Hit");
 		Destroy(temp,2f);
 	}
-	void Flip(){
-		if(Input.GetAxis("Horizontal") < 0 ){
+
+	void Flip()
+	{
+		if(Input.GetAxis("Horizontal") < 0 )
+		{
 			transform.localRotation = Quaternion.Euler(0,180,0);
 		}
-		if(horizontal > 0 ){
+		if(horizontal > 0 )
+		{
 			transform.localRotation = Quaternion.Euler(0,0,0);
 		}
 	}
-	void FixedUpdate(){
+	void Update()
+	{
+		if(isPlayerAlive)
+		{
+			movingPlayer();
+		}
+	}
+	void FixedUpdate()
+	{
+		//Debug.Log(Vector2.Distance(new Vector2(transform.position.x,0),new Vector2(beePref.transform.position.x,transform.position.y)));
 		horizontal = 1;
 		rb.velocity = new Vector2(horizontal * speedForce,rb.velocity.y);
 	}
 
-	void OnTriggerEnter2D(Collider2D other){
-		if(other.tag == "Obstacles"){
-			if(damage != 0f){
-			TakeDamage(damage);
-			Debug.Log("Health: " + health);
+	void OnTriggerEnter2D(Collider2D other)
+	{
+		if(other.tag == "Obstacles")
+		{
+			if(damage != 0f)
+			{
+				if(health > 50f)
+					FindObjectOfType<AudioManager>().Play("SpikeHit");
+
+				TakeDamage(damage);
+		  }
 		}
-		}
+
 	}
-	void TakeDamage(float amount){
+
+public void TakeDamage(float amount)
+	{
 		InitCBT();
 		health -= amount;
-		if(health <= 0f){
+		Debug.Log("Health: " + health);
+		if(health <= 0f)
+		{
 			if(player != null)
 			Death();
+
 		}
 	}
-	void Death(){
+
+	void Death()
+	{
 			Destroy(player);
+			isPlayerAlive = false;
+			scoreManager.highScoreCount = scoreManager.scoreCount;
+			SaveHighScore();
+			scoreManager.scoreCount = 0f;
+			FindObjectOfType<AudioManager>().Play("Death");
 	}
-	public void jumpPlayer(){
-		if(grounded)
+
+	public void jumpPlayer()
+	{
+		if(grounded && !PauseMenu.GameIsPaused)
 			rb.AddForce(new Vector2(0,jumpForce));
 	}
+
+	public void SaveHighScore()
+	{
+		if(scoreManager.highScoreCount > PlayerPrefs.GetFloat("HighScore",0f))
+			PlayerPrefs.SetFloat("HighScore",Mathf.Round(scoreManager.highScoreCount));
+	}
+
 }

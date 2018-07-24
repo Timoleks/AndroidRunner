@@ -7,78 +7,116 @@ public class spawnObst : MonoBehaviour {
 
 	public GameObject obstacles;
 	public GameObject flyingObstacles;
-	public scoreManager ScoreManager;
 	public Transform spawnPoint;
 	public Transform spawnPoint2;
-
+	public Transform spawnPoint3;
+	public GameObject plant;
 
 	private int obstaclesCount = 1;
 	private bool spawnObstacles = true;
-	private float spawnRate = 2f;
+	private float spawnRate = 3f;
 	private float nextSpawn;
-	//private float nextSpawnStage2;
 	private float maceFlySpawn;
 	private float maceRate = 15f;
+	private float plantRate = 25f;
+	private float plantSpawn;
 
-	//bool maceSpawn = false;
-	void Start () {
+	void Start ()
+	{
 		nextSpawn = Time.time + spawnRate; //Spiketime
 		maceFlySpawn = Time.time + maceRate; //maceTime
-		//nextSpawnStage2 = Time.time + spawnRate;
+		plantSpawn = Time.time + plantRate;
 	}
 
 
-	// Core Functions -----
-	void Update () {
-			SpawnNextObstacles();
-	}
-	 	private void StartObst1(){
 
-		SpikeSpawningObst1();
+	void Update ()
+	{
+			if(spawnPoint != null && spawnPoint2 != null)
+				SpawnNextObstacles();
 
-		//if(ScoreManager.scoreCount >= 40f)
-		//	obstaclesCount = 2;
+				//Debug.Log("State:" + obstaclesCount);
 	}
-	private void StartObst2(){
-		SpikeSpawningObst2();
+
+	private void SpawnNextObstacles()
+	{
+		if(spawnObstacles)
+			SpawningObst1();
 	}
-	private void SpawnNextObstacles(){
-		if(spawnObstacles){
-			switch(obstaclesCount){
-				case 1: StartObst1();  //first stage
-				break;
-				case 2: StartObst2();
-				break;
+
+
+
+	private void SpawningObst1()
+	{
+		SpikeSpawning();
+		MaceSpawning();
+		PlantSpawning();
+		if(scoreManager.scoreCount >= 20f)
+			obstaclesCount = 2;
+	}
+
+
+	private void SpikeSpawning()
+	{
+		if(Time.time > nextSpawn)
+		{
+			SpikeInst();
+		}
+	}
+
+	private void PlantSpawning(){
+		if(scoreManager.scoreCount >= 15f)
+		{
+			if(Time.time > plantSpawn)
+			{
+				PlantInst();
 			}
 		}
 	}
 
-	// - -------------------------------
-	private void SpikeSpawningObst2(){
-		if(Time.time > nextSpawn){
-			GameObject cloneSpike = Instantiate(obstacles,new Vector2(spawnPoint.position.x,-0.17f),Quaternion.identity) as GameObject;
-			Destroy(cloneSpike,6f);
-			nextSpawn = Time.time + Random.Range(1f,2f);
-    }
+	private void MaceSpawning()
+	{
+		if(scoreManager.scoreCount >= 10f)
+		{
+			if(Time.time > maceFlySpawn)
+			{
+				MaceInst();
+			}
+		}
 	}
 
-	private void SpikeSpawningObst1(){
-		if(Time.time > nextSpawn){
-			GameObject cloneSpike = Instantiate(obstacles,new Vector2(spawnPoint.position.x,-0.17f),Quaternion.identity) as GameObject;
-			Destroy(cloneSpike,7f);
-			if(ScoreManager.scoreCount >= 10f)
+
+
+	//--- Insts -----
+			private void PlantInst()
 			{
-				//Mace Spawn
-				if(Time.time > maceFlySpawn){
-					MaceFly();
+				GameObject clonePlant = Instantiate(plant,new Vector2(spawnPoint3.position.x,1f),Quaternion.identity) as GameObject;
+				Destroy(clonePlant,10f);
+				plantSpawn = Time.time + Random.Range(21f,plantRate);
+			}
+
+
+			private void MaceInst()
+			{
+				GameObject cloneFlySpike = Instantiate(flyingObstacles,new Vector2(spawnPoint2.position.x,1.57f),Quaternion.identity) as GameObject;
+				Destroy(cloneFlySpike,10f);
+				maceFlySpawn = Time.time + Random.Range(12f,maceRate);
+			}
+
+			private void SpikeInst()
+			{
+				GameObject cloneSpike = Instantiate(obstacles,new Vector2(spawnPoint.position.x,-0.94f),Quaternion.identity) as GameObject;
+				Destroy(cloneSpike,7f);
+				switch(obstaclesCount)
+				{
+					case 1: nextSpawn = Time.time + Random.Range(1f,spawnRate);
+					break;
+					case 2: nextSpawn = Time.time + Random.Range(1f,2.4f);
+					break;
 				}
 			}
-			nextSpawn = Time.time + Random.Range(1f,3f);
-    }
-	}
-	private void MaceFly(){
-		GameObject cloneFlySpike = Instantiate(flyingObstacles,new Vector2(spawnPoint2.position.x,2.42f),Quaternion.identity) as GameObject;
-		Destroy(cloneFlySpike,10f);
-		maceFlySpawn = Time.time + maceRate;
-	}
+
+// ---- Insts ----
+
+
 }

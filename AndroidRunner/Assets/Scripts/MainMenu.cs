@@ -6,9 +6,11 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour {
 
 	public void PlayGame(){
+		FindObjectOfType<AudioManager>().Play("Click");
 		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
 	}
 	public void QuitGame(){
+		FindObjectOfType<AudioManager>().Play("Click");
 		Application.Quit();
 	}
 

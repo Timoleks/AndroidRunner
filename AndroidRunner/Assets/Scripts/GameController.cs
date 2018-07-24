@@ -9,8 +9,7 @@ public class GameController : MonoBehaviour {
   public GameObject ninjaButton;
 
   private bool isBlurUsed = false;
-//  public GameObject jumpButton;
-  //public GameObject[] Obstacles;
+
 
 
 
@@ -21,10 +20,8 @@ public class GameController : MonoBehaviour {
   void Update(){
     if(PauseMenu.GameIsPaused){
       ninjaButton.GetComponent<Button>().enabled = false;
-    //  jumpButton.GetComponent<Button>().enabled = false;
     }
     if(PauseMenu.GameIsPaused == false){
-      //  jumpButton.GetComponent<Button>().enabled = true;
       if(!isBlurUsed)
         ninjaButton.GetComponent<Button>().enabled = true;
     }
@@ -34,6 +31,7 @@ public class GameController : MonoBehaviour {
     ninjaButton.GetComponent<Button>().enabled = false;
     isBlurUsed = true;
     ninjaButton.GetComponent<Image>().color = new Color32(255,0,0,255);
+    FindObjectOfType<AudioManager>().Play("NinjaSkill");
     StartCoroutine(DurableEffect());
   }
   IEnumerator DurableEffect(){
@@ -49,8 +47,11 @@ public class GameController : MonoBehaviour {
   }
   void AvoidDamage(){
 		Player.damage = 0f;
+    beeFly.beeDamage = 0f;
 	}
   void BackDamage(){
-    Player.damage = 20f;
+    Player.damage = 50f;
+    beeFly.beeDamage = 10f;
   }
+
 }
