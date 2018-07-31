@@ -103,6 +103,7 @@ MonoBehaviour:
   projectile: {fileID: 1540437848267908, guid: 677168bb5af00dc4a88e32a68e5bb226, type: 2}
   beeDeathParticles: {fileID: 1912924088568874, guid: 351496ac67069524ba6e7fb0e114d984,
     type: 2}
+  deathDelay: 11
 --- !u!212 &212258349264730560
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -137,7 +138,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_Sprite: {fileID: 21300000, guid: 28b10e96f632c42ac8e50d8bfa481408, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

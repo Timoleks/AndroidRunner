@@ -36,7 +36,7 @@ public class Player : MonoBehaviour {
 
 	void movingPlayer()
 	{
-		if(Input.GetMouseButtonDown(0))
+		if(Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
 		{
 				jumpPlayer();
 		}

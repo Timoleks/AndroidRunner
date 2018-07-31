@@ -18,8 +18,9 @@ public class spawnObst : MonoBehaviour {
 	private float nextSpawn;
 	private float maceFlySpawn;
 	private float maceRate = 15f;
-	private float plantRate = 25f;
+	private float plantRate = 28f;
 	private float plantSpawn;
+	private float jumpToSecCount = 50f;
 
 	void Start ()
 	{
@@ -51,7 +52,7 @@ public class spawnObst : MonoBehaviour {
 		SpikeSpawning();
 		MaceSpawning();
 		PlantSpawning();
-		if(scoreManager.scoreCount >= 20f)
+		if(scoreManager.scoreCount >= jumpToSecCount)
 			obstaclesCount = 2;
 	}
 
@@ -65,7 +66,7 @@ public class spawnObst : MonoBehaviour {
 	}
 
 	private void PlantSpawning(){
-		if(scoreManager.scoreCount >= 15f)
+		if(scoreManager.scoreCount >= 30f)
 		{
 			if(Time.time > plantSpawn)
 			{
@@ -92,7 +93,14 @@ public class spawnObst : MonoBehaviour {
 			{
 				GameObject clonePlant = Instantiate(plant,new Vector2(spawnPoint3.position.x,1f),Quaternion.identity) as GameObject;
 				Destroy(clonePlant,10f);
-				plantSpawn = Time.time + Random.Range(21f,plantRate);
+				plantSpawn = Time.time + Random.Range(23f,plantRate);
+				switch(obstaclesCount)
+				{
+					case 1: plantSpawn = Time.time + Random.Range(23f,plantRate);
+					break;
+					case 2: plantSpawn = Time.time + Random.Range(23f, plantRate - 3f);
+					break;
+				}
 			}
 
 
@@ -100,7 +108,13 @@ public class spawnObst : MonoBehaviour {
 			{
 				GameObject cloneFlySpike = Instantiate(flyingObstacles,new Vector2(spawnPoint2.position.x,1.57f),Quaternion.identity) as GameObject;
 				Destroy(cloneFlySpike,10f);
-				maceFlySpawn = Time.time + Random.Range(12f,maceRate);
+				switch(obstaclesCount)
+				{
+					case 1: maceFlySpawn = Time.time + Random.Range(12f,maceRate);
+					break;
+					case 2: maceFlySpawn = Time.time + Random.Range(10f,maceRate - 2f);
+					break;
+				}
 			}
 
 			private void SpikeInst()
@@ -111,7 +125,7 @@ public class spawnObst : MonoBehaviour {
 				{
 					case 1: nextSpawn = Time.time + Random.Range(1f,spawnRate);
 					break;
-					case 2: nextSpawn = Time.time + Random.Range(1f,2.4f);
+					case 2: nextSpawn = Time.time + Random.Range(1f,1.8f);
 					break;
 				}
 			}
